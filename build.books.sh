@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+# Pass a language suffix as a parameter. Example: ./build.books.sh .es
+LANGUAGE="$1"
+README_FILE=gb-readme.md # default
+
+case "$LANGUAGE" in
+    .es)
+        README_FILE=es-readme.md
+        ;;
+esac
+
+
 set -e
 
 #docker run -v `pwd`:/source jagregory/pandoc -o learn-go-with-tests.pdf -H meta.tex --latex-engine=xelatex --variable urlcolor=blue --toc --toc-depth=1 pdf-cover.md \
@@ -30,8 +41,12 @@ set -e
 #    os-exec.md \
 #    error-types.md \
 
-docker run -v `pwd`:/source jagregory/pandoc -o learn-go-with-tests.epub --latex-engine=xelatex --toc --toc-depth=1 title.txt \
-    gb-readme.md \
+docker run -v `pwd`:/source jagregory/pandoc \
+    -o learn-go-with-tests$LANGUAGE.epub \
+    --latex-engine=xelatex \
+    --toc --toc-depth=1 \
+    title$LANGUAGE.txt \
+    $README_FILE \
     why.md \
     hello-world.md \
     integers.md \
