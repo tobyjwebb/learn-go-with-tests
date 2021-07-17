@@ -47,7 +47,7 @@ docker run -v `pwd`:/source jagregory/pandoc \
     --toc --toc-depth=1 \
     title$LANGUAGE.txt \
     $README_FILE \
-    why.md \
+    why$LANGUAGE.md \
     hello-world.md \
     integers.md \
     iteration.md \
