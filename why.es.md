@@ -42,93 +42,93 @@ Aunque seas un ingeniero de software increíble, caerás preso al hecho de no co
 
 Lehman estaba de racha en los 70 porque nos dio otra ley para digerir.
 
-## The Law of Increasing Complexity
+## La Ley de la Complejidad Creciente
 
-> As a system evolves, its complexity increases unless work is done to reduce it
+> A medida que evoluciona un sistema, su complejidad crece a menos que se dedique trabajo para reducirlo
 
-What he's saying here is we can't have software teams as blind feature factories, piling more and more features on to software in the hope it will survive in the long run. 
+Lo que nos está diciendo aquí es que no podemos tener equipos de desarrollo como factorías de mejoras ciegas, apilando más y más mejoras a un software con la esperanza que sobrevivirá a largo plazo.
 
-We **have** to keep managing the complexity of the system as the knowledge of our domain changes. 
+**Tenemos** que seguir gestionando la complejidad del sistema a medida que nuestro conocimiento de nuestro dominio cambia.
 
-## Refactoring
+## Refactorización
 
-There are _many_ facets of software engineering that keeps software malleable, such as:
+Hay _muchas_ facetas de la ingeniería de software que mantiene el software adaptable, tales como:
 
-- Developer empowerment
-- Generally "good" code. Sensible separation of concerns, etc etc
-- Communication skills
-- Architecture
-- Observability
-- Deployability
-- Automated tests
-- Feedback loops
+- Empoderamiento del desarrollador
+- Código "bueno" en genral. Separación de intereses sensatas, etc, etc...
+- Habilidades de comunicación
+- Arquitectura
+- Observabilidad
+- Facilidad de despliegue
+- Pruebas automatizadas
+- Bucles de retroalimentación
 
-I am going to focus on refactoring. It's a phrase that gets thrown around a lot "we need to refactor this" - said to a developer on their first day of programming without a second thought. 
+Me voy a centrar en la refactorización. Es una palabra que sale mucho "necesitamos refactorizar esto" - dicho a un desarrollador en su primer día de programación sin pensarlo dos veces.
 
-Where does the phrase come from? How is refactoring just different from writing code?
+De dónde proviene la palabra? En qué se diferencia la refactorización de simplemente escribir código?
 
-I know that I and many others have _thought_ we were doing refactoring but we were mistaken
+Sé que muchos, y yo mismo hemos _pensado_ que estabamos refactorizando, pero estábamos equivocados
 
-[Martin Fowler describes how people are getting it wrong](https://martinfowler.com/bliki/RefactoringMalapropism.html)
+[Martin Fowler describo cómo la gente se equivoce](https://martinfowler.com/bliki/RefactoringMalapropism.html)
 
-> However the term "refactoring" is often used when it's not appropriate. If somebody talks about a system being broken for a couple of days while they are refactoring, you can be pretty sure they are not refactoring.
+> Sin embargo, el término "refactorización" se usa cuando no es apropiado. Si alguien habla sobre un sistema estando roto varios días mientras se refactoriza, puedes estar bastante seguro que no están refactorizando.
 
-So what is it?
+Así que, ¿qué es exactamente?
 
-### Factorisation
+### Factorización
 
-When learning maths at school you probably learned about factorisation. Here's a very simple example
+Cuando estuviste aprendiendo matemáticas en el colegio probablemente aprendiste sobre la factorización. Aquí hay un ejemplo muy simple
 
-Calculate `1/2 + 1/4`
+Calcula `1/2 + 1/4`
 
-To do this you _factorise_ the denominators, turning the expression into 
+Para hacer esto, debes _factorizar_ los denominaddores, convirtiendo la expresión a
 
-`2/4 + 1/4` which you can then turn into `3/4`. 
+`2/4 + 1/4` que ya se puede convertir en `3/4`. 
 
-We can take some important lessons from this. When we _factorise the expression_ we have **not changed the meaning of the expression**. Both of them equal `3/4` but we have made it easier for us to work with; by changing `1/2` to `2/4` it fits into our "domain" easier. 
+Podemos tomar algunas lecciones importantes de esto. Cuando _factorizamos la expresión_, **no hemos cambiado el significado de la expresión**. Ambos equivalen a `3/4` pero hemos hecho que sea más fácil de trabajar con ello: cuando cambiamos `1/2` a `2/4`, encaja nuestro "dominio" más fácilmente.
 
-When you refactor your code, you are trying to find ways of making your code easier to understand and "fit" into your current understanding of what the system needs to do. Crucially **you should not be changing behaviour**. 
+Cuando refactorizas tu código, estás intentando encontrar maneras de hacer que tu código sea más fácil de entender y que "encaje" con tu comprensión actual de lo que el sistema debe hacer. Crucialmente **no debes cambiar el comportamiento**.
 
-#### An example in Go
+#### Un ejemplo en Go
 
-Here is a function which greets `name` in a particular `language`
+Aquí hay una función que saluda a `nombre` en un `idioma` en particular
 
-    func Hello(name, language string) string {
+    func Hola(nombre, idioma string) string {
     
-      if language == "es" {
-         return "Hola, " + name
+      if idioma == "es" {
+         return "Hola, " + nombre
       }
     
-      if language == "fr" {
-         return "Bonjour, " + name
+      if idioma == "fr" {
+         return "Bonjour, " + nombre
       }
       
-      // imagine dozens more languages
+      // Imagínate docenas de idiomas más...
     
-      return "Hello, " + name
+      return "Hello, " + nombre
     }
 
-Having dozens of `if` statements doesn't feel good and we have a duplication of concatenating a language specific greeting with `, ` and the `name.` So I'll refactor the code.
+Me da mala espina tener muchas sentencias `if` y tenemos una duplicación de la concatenazión del saludo de cada idioma con `, ` y el `nombre.` Así que refactorizaré el código.
 
-    func Hello(name, language string) string {
+    func Hola(nombre, idioma string) string {
       	return fmt.Sprintf(
       		"%s, %s",
-      		greeting(language),
-      		name,
+      		saludo(idioma),
+      		nombre,
       	)
     }
     
-    var greetings = map[string]string {
+    var saludos = map[string]string {
       "es": "Hola",
       "fr": "Bonjour",
       //etc..
     }
     
-    func greeting(language string) string {
-      greeting, exists := greetings[language]
+    func saludo(idioma string) string {
+      saludo, existe := saludos[idioma]
       
-      if exists {
-         return greeting
+      if existe {
+         return saludo
       }
       
       return "Hello"
