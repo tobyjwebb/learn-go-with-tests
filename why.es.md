@@ -95,8 +95,8 @@ Aquí hay una función que saluda a `nombre` en un `idioma` en particular
 
     func Hola(nombre, idioma string) string {
     
-      if idioma == "es" {
-         return "Hola, " + nombre
+      if idioma == "en" {
+         return "Hello, " + nombre
       }
     
       if idioma == "fr" {
@@ -105,7 +105,7 @@ Aquí hay una función que saluda a `nombre` en un `idioma` en particular
       
       // Imagínate docenas de idiomas más...
     
-      return "Hello, " + nombre
+      return "Hola, " + nombre
     }
 
 Me da mala espina tener muchas sentencias `if` y tenemos una duplicación de la concatenazión del saludo de cada idioma con `, ` y el `nombre.` Así que refactorizaré el código.
@@ -119,7 +119,7 @@ Me da mala espina tener muchas sentencias `if` y tenemos una duplicación de la 
     }
     
     var saludos = map[string]string {
-      "es": "Hola",
+      "en": "Hello",
       "fr": "Bonjour",
       //etc..
     }
@@ -131,87 +131,89 @@ Me da mala espina tener muchas sentencias `if` y tenemos una duplicación de la 
          return saludo
       }
       
-      return "Hello"
+      return "Hola"
     }
 
-The nature of this refactor isn't actually important, what's important is I haven't changed behaviour. 
+La naturaleza de esta refactorización realmente no es importante, lo que importa es que no he cambiado el comportamiento.
 
-When refactoring you can do whatever you like, add interfaces, new types, functions, methods etc. The only rule is you don't change behaviour
+Cuando refactorizas puedes hacer lo que quieras, agregar interfaces, nuevos tipos, funciones, métodos etc. La única regla es que no puedes cambiar el comportamiento.
 
-### When refactoring code you must not be changing behaviour
+### Cuando refactorizas código no debes cambiar el comportamiento
 
-This is very important. If you are changing behaviour at the same time you are doing _two_ things at once. As software engineers we learn to break systems up into different files/packages/functions/etc because we know trying to understand a big blob of stuff is hard. 
+Esto es de vital importancia. Si cambias comportamiento a la vez, estás haciendo _dos_ cosas simultáneas. Como ingenieros de software aprendemos a dividir sistemas en distintos ficheros/paquetes/funciones/etc porque sabemos que intentar entender un gran conjunto de algo es difícil.
 
-We don't want to have to be thinking about lots of things at once because that's when we make mistakes. I've witnessed so many refactoring endeavours fail because the developers are biting off more than they can chew.  
+No queremos tener que estar pensando sobre muchas cosas a la vez porque es entonces cuando nos equivocamos. He sido testigo de muchos intentos fallidos de refactorización porque los desarrolladores intentaron morder más de lo que pudieron masticar.
 
-When I was doing factorisations in maths classes with pen and paper I would have to manually check that I hadn't changed the meaning of the expressions in my head. How do we know we aren't changing behaviour when refactoring when working with code, especially on a system that is non-trivial?
+Cuando hacía factorizaciiones en clases de matemáticas con papel y boli, tenía que comprobar manualmente que no había cambiado el significado de las expresiones en la cabeza. ¿Cómo sabemos que no estamos cambiando el comportamiendo cuando refactorizamos, especialmente en un sistema que no es trivial?
 
-Those who choose not to write tests will typically be reliant on manual testing. For anything other than a small project this will be a tremendous time-sink and does not scale in the long run. 
+Aquellos que no escriben pruebas típicamente dependerán de pruebas manuales. Para cualquier cosa que no sea un proyecto pequeño esto será un agota-tiempos enorme y no será escalable a largo plazo.
  
-**In order to safely refactor you need unit tests** because they provide
+**Para refactorizar con seguridad necesitas pruebas unitarias** porque nos proporcionan
 
-- Confidence you can reshape code without worrying about changing behaviour
-- Documentation for humans as to how the system should behave
-- Much faster and more reliable feedback than manual testing
+- Confianza de que puedes cambiar la forma del código sin tener que preocuparte sobre el comportamiento
+- Documentación para humanos sobre cómo el sistema debería comportarse
+- Un retroalimentación mucho más rápido y fiable que testeo manual
 
-#### An example in Go
+#### Un ejemplo en Go
 
 A unit test for our `Hello` function could look like this
+Una prueba unitaria para nuestra función `Hola` podría parecerse a esto:
 
-    func TestHello(t *testing.T) {
-      got := Hello(“Chris”, es)
-      want := "Hola, Chris"
+
+    func TestHola(t *testing.T) {
+      obtenido := Hola("Chris", en)
+      esperado := "Hello, Chris"
     
-      if got != want {
-         t.Errorf("got %q want %q", got, want)
+      if obtenido != esperado {
+         t.Errorf("obtenido %q, esperado %q", obtenido, esperado)
       }
     }
 
-At the command line I can run `go test` and get immediate feedback as to whether my refactoring efforts have altered behaviour. In practice it's best to learn the magic button to run your tests within your editor/IDE. 
+En la línea de comandos puedo ejecutar el comando `go test` y obtener una retroalimentación inmediata en cuanto a si mis esfuerzos de refactorización han cambiado el comportamiento. En la práctica es mejor aprenderse el botón mágico para ejecutar las pruebas dentro de tu editor/IDE.
 
-You want to get in to a state where you are doing 
+Lo óptimo es llegar a un punto en el que estás haciendo
 
-- Small refactor
-- Run tests
-- Repeat
+- Una pequeña refactorización
+- Ejecución de pruebas
+- Repetir
 
-All within a very tight feedback loop so you don't go down rabbit holes and make mistakes.
+Todo con un bucle de retroalimentación rápido para que no empieces a abarcar demasiado y cometer fallos.
 
-Having a project where all your key behaviours are unit tested and give you feedback well under a second is a very empowering safety net to do bold refactoring when you need to. This helps us manage the incoming force of complexity that Lehman describes.
+Tener un proyecto donde todos los comportamientos principales estén cubiertos con pruebas unitarias y tengas una retroalimentación en bastante menos de un segundo es un arma muy poderosa para hacer refactorizaciones sin temor sobre lo que necesites hacer. Esto nos ayuda a manejar la fuerza entrante de complejidad que describe Lehman.
 
-## If unit tests are so great, why is there sometimes resistance to writing them?
+## Si las pruebas unitarias son tan buenas, ¿por qué hay veces que se duda en codificarlas?
 
-On the one hand you have people (like me) saying that unit tests are important for the long term health of your system because they ensure you can keep refactoring with confidence. 
+Por un lado tienes a personas (como yo) diciendo que las pruebas unitarias son importantes para la salud a largo plazo de tu sistema porque aseguran que puedes seguir refactorizando con confianza.
 
-On the other you have people describing experiences of unit tests actually _hindering_ refactoring.
+Por el otro lado hay personas describiendo experiencias de pruebas unitarias _obstacularizando_ la refactorización.
 
-Ask yourself, how often do you have to change your tests when refactoring? Over the years I have been on many projects with very good test coverage and yet the engineers are reluctant to refactor because of the perceived effort of changing tests.
+Pregúntate, ¿cuántas veces tienes que cambiar las pruebas cuando refactorizas? A lo largo de los años he estado en muchos proyectos con una cobertura de pruebas muy buena, y sin embargo los ingenieros son rehacios a refactorizar por una percepción de un esfuerzo de cambiar las pruebas.
 
-This is the opposite of what we are promised!
+¡Esto es justo lo contrario de lo que se nos prometió!
 
-### Why is this happening?
+### ¿Por qué pasa esto?
 
-Imagine you were asked to develop a square and we thought the best way to accomplish that would be stick two triangles together. 
+Imagina que te piden desarrollar un cuadrado, y pensamos que la mejor solución sería juntar dos triángulos.
 
-![Two right-angled triangles to form a square](https://i.imgur.com/ela7SVf.jpg)
+![Dos triángulos rectángulos para formar un cuadrado](https://i.imgur.com/ela7SVf.jpg)
 
-We write our unit tests around our square to make sure the sides are equal and then we write some tests around our triangles. We want to make sure our triangles render correctly so we assert that the angles sum up to 180 degrees, perhaps check we make 2 of them, etc etc. Test coverage is really important and writing these tests is pretty easy so why not? 
+Escribimos nuestras pruebas unitarias alrededor del cuadrado para asegurarnos que los laterales son iguales, y después escribimos algunas pruebas acerca de los triángulos. Queremos asegurarnos que nuestros triángulos se renderizan correctamente así que colocamos afirmaciones de que los ángulos deben sumar 180 grados, quizás hacemos 2 de ellos, etc etc. La cobertura de pruebas es muy importante y escribir estas pruebas es bastante fácil así que ¿por qué no?
 
-A few weeks later The Law of Continuous Change strikes our system and a new developer makes some changes. She now believes it would be better if squares were formed with 2 rectangles instead of 2 triangles. 
+Un par de semanas más tarde, la Ley de Cambio Contínuo azota nuestro sistema y una nueva desarrolladora hace algunos cambios. Ahora piensa que sería mejor que los cuadrados se formaran de dos rectángulos en vez de dos triángulos.
 
-![Two rectangles to form a square](https://i.imgur.com/1G6rYqD.jpg)
+![Dos rectángulos para formar un cuadrado](https://i.imgur.com/1G6rYqD.jpg)
 
-She tries to do this refactor and gets mixed signals from a number of failing tests. Has she actually broken important behaviours here? She now has to dig through these triangle tests and try and understand what's going on. 
+La nueva programadora intenta hacer esta refactorización, y recibe señales mixtos de unas pruebas fallidas. ¿Ha roto alguna funcionalidad importante? Ahora tiene que buscar entre las pruebas de los triángulos e intentar entender qué está pasando.
 
-_It's not actually important that the square was formed out of triangles_ but **our tests have falsely elevated the importance of our implementation details**. 
+_Realmente no es importante que el cuadrado se formara de triángulos_ but **nuestras pruebas han equivocadamente puesto la importancia en detalles de implementación**. 
 
-## Favour testing behaviour rather than implementation detail
+## Preferir probar comportamiento en vez de detalle de implementación
 
-When I hear people complaining about unit tests it is often because the tests are at the wrong abstraction level. They're testing implementation details, overly spying on collaborators and mocking too much. 
+Cuando oigo como algunas personas se quejan sobre las pruebas unitarias, es a menudo debido a que las pruebas se han concebido al nivel equivocado de abstracción. Están probando detalles de implementación, prestando demasiada importancia en colaboradores, y usando demasiados "dobles de prueba" (mocks, o test doubles).
 
-I believe it stems from a misunderstanding of what unit tests are and chasing vanity metrics (test coverage). 
+Creo que la raíz de este problema es un malentendido de lo que hacen las pruebas unitarias, y la persecución de métricas vanidosas (cobertura de pruebas).
 
-If I am saying just test behaviour, should we not just only write system/black-box tests? These kind of tests do have lots of value in terms of verifying key user journeys but they are typically expensive to write and slow to run. For that reason they're not too helpful for _refactoring_ because the feedback loop is slow. In addition black box tests don't tend to help you very much with root causes compared to unit tests. 
+Si digo que sólo se debe probar el comportamiento, ¿no deberíamos escribir pruebas de sistema o caja negra? Este tipo de pruebas sí tienen mucho valor en cuanto a la validación de experiencias de usuario principales, pero normalmente son caros para escribir y lentos para ejecutar. Por esa razón no son de gran ayuda para la _refactorización_ porque el bucle de retroalimentación es muy lento. Adicionalmente, pruebas de caja negra no suelen ayudar mucho con respecto a los problemas raíces comparado con las pruebas unitarias.
 
 So what _is_ the right abstraction level?
 
