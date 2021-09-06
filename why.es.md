@@ -215,15 +215,15 @@ Creo que la raíz de este problema es un malentendido de lo que hacen las prueba
 
 Si digo que sólo se debe probar el comportamiento, ¿no deberíamos escribir pruebas de sistema o caja negra? Este tipo de pruebas sí tienen mucho valor en cuanto a la validación de experiencias de usuario principales, pero normalmente son caros para escribir y lentos para ejecutar. Por esa razón no son de gran ayuda para la _refactorización_ porque el bucle de retroalimentación es muy lento. Adicionalmente, pruebas de caja negra no suelen ayudar mucho con respecto a los problemas raíces comparado con las pruebas unitarias.
 
-So what _is_ the right abstraction level?
+Así que ¿cuál es _exactamente? el nivel de abstracción correcto?
 
-## Writing effective unit tests is a design problem
+## Escribir pruebas unitarias efectivas es un problema de diseño
 
-Forgetting about tests for a moment, it is desirable to have within your system self-contained, decoupled "units" centered around key concepts in your domain. 
+Si obviamos por el momento las pruebas, es deseable tener dentro de tu sistema "unidades" autocontenidas y desacopladas centradas alrededor de conceptos clave de tu dominio.
 
-I like to imagine these units as simple Lego bricks which have coherent APIs that I can combine with other bricks to make bigger systems. Underneath these APIs there could be dozens of things (types, functions et al) collaborating to make them work how they need to.
+Me gusta imaginarme estas unidades como sencillos ladrillos de Lego que tienen interfaces (APIs) coherentes que puedo usar para combinar con otros ladrillos para construir sistemas más grandes. Debajo de estas interfaces podría haber docenas de cosas (tipos, funciones, etcétera) colaborando para hacer que funcionen como deben.
 
-For instance if you were writing a bank in Go, you might have an "account" package. It will present an API that does not leak implementation detail and is easy to integrate with.
+Por ejemplo si estuvieras escribiendo un banco en Go, podrías tener un paquete (package) "cuenta". Presentará un API que no enseñe detalles de implementación, y que será fácil de integrar.
 
 If you have these units that follow these properties you can write unit tests against their public APIs. _By definition_ these tests can only be testing useful behaviour. Underneath these units I am free to refactor the implementation as much as I need to and the tests for the most part should not get in the way.
 
